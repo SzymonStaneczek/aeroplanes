@@ -1,6 +1,6 @@
 /// <summary>
-/// @author Peter Lowe
-/// @date May 2019
+/// @author Szymon Staneczek
+/// @date Jan/Feb 2022
 ///
 /// you need to change the above lines or lose marks
 /// </summary>
@@ -21,7 +21,8 @@ Game::Game() :
 	m_exitGame{false} //when true game will exit
 {
 	setupFontAndText(); // load font 
-	setupSprite(); // load texture
+	setupBigPlane(); // loads big plane
+
 }
 
 /// <summary>
@@ -112,7 +113,7 @@ void Game::render()
 {
 	m_window.clear(sf::Color::White);
 	m_window.draw(m_welcomeMessage);
-	m_window.draw(m_logoSprite);
+	m_window.draw(m_BigPlaneSprite);
 	m_window.display();
 }
 
@@ -125,27 +126,27 @@ void Game::setupFontAndText()
 	{
 		std::cout << "problem loading arial black font" << std::endl;
 	}
-	m_welcomeMessage.setFont(m_ArialBlackfont);
-	m_welcomeMessage.setString("SFML Game");
-	m_welcomeMessage.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
-	m_welcomeMessage.setPosition(40.0f, 40.0f);
-	m_welcomeMessage.setCharacterSize(80U);
-	m_welcomeMessage.setOutlineColor(sf::Color::Red);
-	m_welcomeMessage.setFillColor(sf::Color::Black);
-	m_welcomeMessage.setOutlineThickness(3.0f);
+	
 
+}
+
+void Game::setupBigPlane()
+{
+	if (!m_BigPlane.loadFromFile("ASSETS\\IMAGES\\planes.png"))
+	{
+		std::cout << "problem loading big plane texture" << std::endl;
+	}
+
+	sf::IntRect bigPlaneRect{ 3, 11, 104, 93 };
+
+	m_BigPlaneSprite.setOrigin(3.0f, 11.0f);
+	m_BigPlaneSprite.setTexture(m_BigPlane);
+	m_BigPlaneSprite.setTextureRect(bigPlaneRect);
+	m_BigPlaneSprite.setPosition(40.0f, 40.0f);
+	
 }
 
 /// <summary>
 /// load the texture and setup the sprite for the logo
 /// </summary>
-void Game::setupSprite()
-{
-	if (!m_logoTexture.loadFromFile("ASSETS\\IMAGES\\SFML-LOGO.png"))
-	{
-		// simple error message if previous call fails
-		std::cout << "problem loading logo" << std::endl;
-	}
-	m_logoSprite.setTexture(m_logoTexture);
-	m_logoSprite.setPosition(300.0f, 180.0f);
-}
+
