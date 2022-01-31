@@ -78,6 +78,14 @@ void Game::processEvents()
 		{
 			processKeys(newEvent);
 		}
+		if (sf::Event::MouseButtonPressed == newEvent.type)
+		{
+			processMousePressed(newEvent);
+		}
+		if (sf::Event::MouseButtonReleased == newEvent.type)
+		{
+			processMouseRelease(newEvent);
+		}
 	}
 }
 
@@ -94,6 +102,37 @@ void Game::processKeys(sf::Event t_event)
 	}
 }
 
+void Game::processMousePressed(sf::Event t_newEvent)
+{
+	m_firstClick.x = t_newEvent.mouseButton.x;
+	m_firstClick.y = t_newEvent.mouseButton.y;
+
+}
+
+void Game::processMouseRelease(sf::Event t_newEvent)
+{
+	m_secondClick.x = t_newEvent.mouseButton.x;
+	m_secondClick.y = t_newEvent.mouseButton.y;
+	sf::Vector2f velocity = m_secondClick - m_firstClick;
+
+	float headingRadians = std::atan2(velocity.y, velocity.x);
+	float headingDegrees = 180.0f * headingRadians / static_cast<float>(M_PI);
+	headingDegrees += 90.0f;
+	if (sf::Mouse::Left == t_newEvent.mouseButton.button)
+	{
+		m_BigPlaneVelociy = velocity / 100.0f;
+		m_BigPlaneHeading = headingDegrees;
+		m_BigPlaneSprite.setRotation(headingDegrees);
+	}
+}
+
+void Game::planeMovemenet()
+{
+	m_BigPlaneLocation += m_BigPlaneVelociy;
+	m_BigPlaneSprite.setPosition(m_BigPlaneLocation);
+
+}
+
 /// <summary>
 /// Update the game world
 /// </summary>
@@ -104,6 +143,7 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();
 	}
+	planeMovemenet();
 }
 
 /// <summary>
@@ -138,12 +178,15 @@ void Game::setupBigPlane()
 	}
 
 	sf::IntRect bigPlaneRect{ 3, 11, 104, 93 };
+	sf::Vector2f bigPlaneStart{ 300.0f, 180.0f };
 
-	m_BigPlaneSprite.setOrigin(3.0f, 11.0f);
 	m_BigPlaneSprite.setTexture(m_BigPlane);
 	m_BigPlaneSprite.setTextureRect(bigPlaneRect);
-	m_BigPlaneSprite.setPosition(40.0f, 40.0f);
-	
+	m_BigPlaneSprite.setPosition(bigPlaneStart);
+	m_BigPlaneLocation = bigPlaneStart;
+
+	m_BigPlaneSprite.setOrigin(bigPlaneRect.height / 2.0f, bigPlaneRect.width / 2.0f);
+	m_BigPlaneSprite.setRotation(m_BigPlaneHeading);
 }
 
 /// <summary>
